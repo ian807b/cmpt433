@@ -1,0 +1,16 @@
+# Build the app, using the HAL
+
+include_directories(include)
+file(GLOB MY_SOURCES "src/*.c")
+add_executable(as1 ${MY_SOURCES})
+
+# Make use of the HAL library
+target_link_libraries(as1 LINK_PRIVATE hal)
+
+# Copy executable to final location (change `hello_world` to project name as needed)
+add_custom_command(TARGET as1 POST_BUILD 
+  COMMAND "${CMAKE_COMMAND}" -E copy 
+     "$<TARGET_FILE:as1>"
+     "~/cmpt433/public/myApps/as1" 
+  COMMENT "Copying ARM executable to public NFS directory")
+   
