@@ -21,16 +21,14 @@ void led_init() {
     bbgSetTrigger(LED_PATHS_TRIGGER[i], "none");
   }
 
+  led_cleanup();  // Turn off everything first
+
   for (int i = 1; i < 3; i++) {  // Turn on middle two LEDs on BBG
     bbgLedBright(LED_PATHS_BRIGHTNESS[i], "1");
   }
 }
 
 void led_cleanup(void) {
-  assert(is_initialized);
-  is_initialized = false;
-
-  // Turn off all LEDs
   for (int i = 0; i < 4; i++) {
     bbgLedBright(LED_PATHS_BRIGHTNESS[i], "0");
   }

@@ -43,27 +43,32 @@ int main() {
       "When the LEDs light up, press the joystick in that direction! (Press "
       "left or right to exit)\n");
 
-  // If the user is pressing the joystick, tell them “Please let go of joystick”
-  // and wait until the joystick is not pressing.
-  while (true) {
-    if (getJoystickDirection() != JSTICK_NONE) {
-      printf("Please let go of joystick\n");
-      while (getJoystickDirection() != JSTICK_NONE) {
-        sleepForMs(500);
-      }
-      break;
-    } else {
-      break;
-    }
-  }
-
   srand(time(NULL));
+  long long bestRecord = __LONG_LONG_MAX__;
+  bool responseFromUser = false;
+  bool firstExecution = true;
 
   while (true) {
     printf("Get ready...\n");
+    responseFromUser = false;
 
-    // Wait for 3 seconds
-    sleepForMs(3000);
+    // If the user is pressing the joystick, tell them “Please let go of
+    // joystick” and wait until the joystick is not pressing.
+    while (true) {
+      if ((getJoystickDirection() != JSTICK_NONE) && firstExecution == true) {
+        printf("Please let go of joystick\n");
+        while (true) {
+          if (getJoystickDirection() == JSTICK_NONE) {
+            break;
+          }
+        }
+      }
+      break;
+    }
+    firstExecution = false;
+
+    // Wait for 1.5 seconds
+    sleepForMs(1500);
 
     // Turn the middle two LEDs off
     bbgLedBright(LED_PATHS_BRIGHTNESS[1], "0");
@@ -80,9 +85,7 @@ int main() {
     }
 
     // Declare variables for timing & loop control
-    bool responseFromUser = false;
     long long responseTime = 0;
-    long long bestRecord = 0;
     long long startTime = getTimeInMs();
     joyStickButton userResponse = JSTICK_NONE;
 
@@ -94,17 +97,26 @@ int main() {
         if ((direction == 0 && userResponse == JSTICK_DOWN) ||
             (direction == 1 && userResponse == JSTICK_UP)) {
           printf("Correct!\n");
-          if (responseTime > bestRecord) {
+          if (responseTime < bestRecord) {
             printf("New best time!\n");
             bestRecord = responseTime;
           }
           printf(
               "Your reaction time was %lldms; best so far in game is %lld.\n",
               responseTime, bestRecord);
+          // TODO: Flash all four LEDs on and off at 4hz for 0.5 seconds (two
+          // flashes)
+        } else if (getJoystickDirection() == JSTICK_LEFT ||
+                   getJoystickDirection() == JSTICK_RIGHT) {
+          printf("User selected to quit.\n");
+          led_cleanup();
+          return 0;
         } else {
           printf("Incorrect.\n");
+          // TODO: Flash all four LEDs on and off at 10hz for 1 second
         }
         responseFromUser = true;
+        // Turn off the LED each round
         bbgLedBright(LED_PATHS_BRIGHTNESS[0], "0");
         bbgLedBright(LED_PATHS_BRIGHTNESS[3], "0");
       } else if (responseTime > 5000) {
@@ -112,16 +124,6 @@ int main() {
         led_cleanup();
         return 0;
       }
-    }
-
-    // Quit for pressing left or right
-    if (getJoystickDirection() == JSTICK_LEFT ||
-        getJoystickDirection() == JSTICK_RIGHT) {
-      printf("User selected to quit.\n");
-      for (int i = 0; i < 4; i++) {
-        bbgLedBright(LED_PATHS_BRIGHTNESS[i], "0");
-      }
-      break;
     }
   }
 
