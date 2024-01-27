@@ -4,28 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// #define LED0_PATH_TRIGGER "/sys/class/leds/beaglebone:green:usr0/trigger"
-// #define LED1_PATH_TRIGGER "/sys/class/leds/beaglebone:green:usr1/trigger"
-// #define LED2_PATH_TRIGGER "/sys/class/leds/beaglebone:green:usr2/trigger"
-// #define LED3_PATH_TRIGGER "/sys/class/leds/beaglebone:green:usr3/trigger"
-
-// #define LED0_PATH_BRIGHT "/sys/class/leds/beaglebone:green:usr0/brightness"
-// #define LED1_PATH_BRIGHT "/sys/class/leds/beaglebone:green:usr1/brightness"
-// #define LED2_PATH_BRIGHT "/sys/class/leds/beaglebone:green:usr2/brightness"
-// #define LED3_PATH_BRIGHT "/sys/class/leds/beaglebone:green:usr3/brightness"
-
-// Paths to LED control files
+// Paths to LED trigger
 static const char* LED_PATHS_TRIGGER[] = {
     "/sys/class/leds/beaglebone:green:usr0/trigger",
     "/sys/class/leds/beaglebone:green:usr1/trigger",
     "/sys/class/leds/beaglebone:green:usr2/trigger",
     "/sys/class/leds/beaglebone:green:usr3/trigger"};
-
-static const char* LED_PATHS_BRIGHTNESS[] = {
-    "/sys/class/leds/beaglebone:green:usr0/brightness",
-    "/sys/class/leds/beaglebone:green:usr1/brightness",
-    "/sys/class/leds/beaglebone:green:usr2/brightness",
-    "/sys/class/leds/beaglebone:green:usr3/brightness"};
 
 static bool is_initialized = false;
 

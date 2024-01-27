@@ -18,7 +18,17 @@ static void sleepForMs(long long delayInMs) {
   int nanoseconds = delayNs % NS_PER_SECOND;
 
   struct timespec reqDelay = {seconds, nanoseconds};
-  nanosleep(&reqDelay, (struct timespec *) NULL);
+  nanosleep(&reqDelay, (struct timespec *)NULL);
+}
+
+// Code provided for getting current time
+static long long getTimeInMs(void) {
+  struct timespec spec;
+  clock_gettime(CLOCK_REALTIME, &spec);
+  long long seconds = spec.tv_sec;
+  long long nanoSeconds = spec.tv_nsec;
+  long long milliSeconds = seconds * 1000 + nanoSeconds / 1000000;
+  return milliSeconds;
 }
 
 int main() {
@@ -29,52 +39,52 @@ int main() {
   button_init();
 
   printf("Hello embedded world, from Ian!\n");
-  printf("get ready\n");
+  printf("Get ready...\n");
 
   // If the user is pressing the joystick, tell them “Please let go of joystick”
   // and wait until the joystick is not pressing.
   while (true) {
     if (getJoystickDirection() != JSTICK_NONE) {
-        printf("Please let go of joystick\n");
-        while (getJoystickDirection() != JSTICK_NONE) {
-          sleepForMs(500);  
-        }
-        break;
+      printf("Please let go of joystick\n");
+      while (getJoystickDirection() != JSTICK_NONE) {
+        sleepForMs(500);
+      }
+      break;
+    } else {
+      break;
     }
   }
 
-  // Wait for 1s
-  sleepForMs(1000);
+  // Wait for 3 seconds
+  sleepForMs(3000);
 
-  // 5. Picks a random direction (up or down) and print the direction name to the screen.
+  // Turn the middle two LEDs off
+  bbgLedBright(LED_PATHS_BRIGHTNESS[1], "0");
+  bbgLedBright(LED_PATHS_BRIGHTNESS[2], "0");
+  srand(time(NULL));
 
+  while (true) {
+    getTimeInMs();
+    // 0 - Down; 1 - Up
+    int direction = rand() % 2;
+    if (direction == 0) {  // Down
+      printf("Press DOWN now!\n");
+      bbgLedBright(LED_PATHS_BRIGHTNESS[0], "1");
+    } else {  // Up
+      printf("Press UP now!\n");
+      bbgLedBright(LED_PATHS_BRIGHTNESS[3], "1");
+    }
 
+    // Quit for pressing left or right
+    if (getJoystickDirection() == JSTICK_LEFT ||
+        getJoystickDirection() == JSTICK_RIGHT) {
+      printf("User selected to quit.\n");
+      for (int i = 0; i < 4; i++) {
+        bbgLedBright(LED_PATHS_BRIGHTNESS[i], "0");
+      }
+      break;
+    }
+  }
 
-  // 6. Display the program’s chosen direction on the BBG’s LEDs:
-
-  // - Turn off the middle two LEDs
-
-  // - If program chose up, then turn on the top LED (#0).
-
-  // - If program chose down, then turn on the bottom LED (#3).
-
-  // 7. Time how long it takes for the user to press the joystick in any direction.
-
-  // - If timer > 5s, exit program with a message without waiting for a joystick press.
-
-  // 8. Process the user’s joystick press:
-
-  // a) If the user pressed up or down correctly, then:
-
-  // - print a message,
-
-  // - if this was the fastest correct response time yet then display that in a message,
-
-  // - display this attempt’s response time, and best response time so far (in ms),
-
-  // - flash all four LEDs on and off at 4hz for 0.5 seconds (two flashes).
-
-  // b) If the user pressed up or down incorrectly, print a message and flash all four LEDs on and off at 10hz for 1 second.
-
-  // c) If the user pressed left or right, print a message and quit.
+  return 0;
 }
