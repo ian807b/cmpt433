@@ -39,7 +39,9 @@ int main() {
   button_init();
 
   printf("Hello embedded world, from Ian!\n");
-  printf("Get ready...\n");
+  printf(
+      "When the LEDs light up, press the joystick in that direction! (Press "
+      "left or right to exit)\n");
 
   // If the user is pressing the joystick, tell them “Please let go of joystick”
   // and wait until the joystick is not pressing.
@@ -55,24 +57,61 @@ int main() {
     }
   }
 
-  // Wait for 3 seconds
-  sleepForMs(3000);
-
-  // Turn the middle two LEDs off
-  bbgLedBright(LED_PATHS_BRIGHTNESS[1], "0");
-  bbgLedBright(LED_PATHS_BRIGHTNESS[2], "0");
   srand(time(NULL));
 
   while (true) {
-    getTimeInMs();
+    printf("Get ready...\n");
+
+    // Wait for 3 seconds
+    sleepForMs(3000);
+
+    // Turn the middle two LEDs off
+    bbgLedBright(LED_PATHS_BRIGHTNESS[1], "0");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[2], "0");
+
     // 0 - Down; 1 - Up
     int direction = rand() % 2;
     if (direction == 0) {  // Down
       printf("Press DOWN now!\n");
-      bbgLedBright(LED_PATHS_BRIGHTNESS[0], "1");
+      bbgLedBright(LED_PATHS_BRIGHTNESS[3], "1");
     } else {  // Up
       printf("Press UP now!\n");
-      bbgLedBright(LED_PATHS_BRIGHTNESS[3], "1");
+      bbgLedBright(LED_PATHS_BRIGHTNESS[0], "1");
+    }
+
+    // Declare variables for timing & loop control
+    bool responseFromUser = false;
+    long long responseTime = 0;
+    long long bestRecord = 0;
+    long long startTime = getTimeInMs();
+    joyStickButton userResponse = JSTICK_NONE;
+
+    while (!responseFromUser) {
+      userResponse = getJoystickDirection();
+      responseTime = getTimeInMs() - startTime;
+
+      if (userResponse != JSTICK_NONE) {
+        if ((direction == 0 && userResponse == JSTICK_DOWN) ||
+            (direction == 1 && userResponse == JSTICK_UP)) {
+          printf("Correct!\n");
+          if (responseTime > bestRecord) {
+            printf("New best time!\n");
+            bestRecord = responseTime;
+          }
+          printf(
+              "Your reaction time was %lldms; best so far in game is %lld.\n",
+              responseTime, bestRecord);
+        } else {
+          printf("Incorrect.\n");
+        }
+        responseFromUser = true;
+        bbgLedBright(LED_PATHS_BRIGHTNESS[0], "0");
+        bbgLedBright(LED_PATHS_BRIGHTNESS[3], "0");
+      } else if (responseTime > 5000) {
+        printf("No input within 5000ms; quitting!\n");
+        led_cleanup();
+        return 0;
+      }
     }
 
     // Quit for pressing left or right

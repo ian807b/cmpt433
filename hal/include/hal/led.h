@@ -17,5 +17,6 @@ void led_init(void);
 void led_cleanup(void);
 void bbgSetTrigger(const char* fileName, char* value);
 void bbgLedBright(const char* fileName, char* value);
+void flashLed(const char* fileName, const int interval);
 
 #endif

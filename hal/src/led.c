@@ -27,11 +27,13 @@ void led_init() {
 }
 
 void led_cleanup(void) {
-  printf("LED - Cleanup\n");
   assert(is_initialized);
   is_initialized = false;
 
-  // Reset LEDs (optional, based on your application needs)
+  // Turn off all LEDs
+  for (int i = 0; i < 4; i++) {
+    bbgLedBright(LED_PATHS_BRIGHTNESS[i], "0");
+  }
 }
 
 void bbgSetTrigger(const char* fileName, char* value) {
@@ -65,3 +67,6 @@ void bbgLedBright(const char* fileName, char* value) {
   }
   fclose(pLedBrightnessFile);
 }
+
+// void flashLed(const char* fileName, const int interval) {
+// }
