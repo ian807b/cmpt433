@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../../app/include/helper.h"
+
 // Paths to LED trigger
 static const char* LED_PATHS_TRIGGER[] = {
     "/sys/class/leds/beaglebone:green:usr0/trigger",
@@ -64,4 +66,28 @@ void bbgLedBright(const char* fileName, char* value) {
     exit(1);
   }
   fclose(pLedBrightnessFile);
+}
+
+// This function is written with help of AI. It is a simple function, but I
+// originally tried to use snprintf to make to code more usable. After long
+// hours of trial, it failed and I was mentally exhausted to simply rely on the
+// AI. However, I simply asked for the implementation, not the logic itself
+// (again, it is a simple function).
+void flashLed(const int frequency, const double duration) {
+  long long startTime = getTimeInMs();
+  long long durationInMs = duration * 1000;
+  int halfPeriodInMs = 1000 / (2 * frequency);
+
+  while (getTimeInMs() - startTime <= durationInMs) {
+    bbgLedBright(LED_PATHS_BRIGHTNESS[0], "1");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[1], "1");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[2], "1");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[3], "1");
+    sleepForMs(halfPeriodInMs);
+    bbgLedBright(LED_PATHS_BRIGHTNESS[0], "0");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[1], "0");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[2], "0");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[3], "0");
+    sleepForMs(halfPeriodInMs);
+  }
 }

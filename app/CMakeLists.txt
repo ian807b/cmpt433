@@ -1,6 +1,6 @@
 # Build the app, using the HAL
 
-# include_directories(include)
+include_directories(include)
 file(GLOB MY_SOURCES "src/*.c")
 add_executable(as1 ${MY_SOURCES})
 

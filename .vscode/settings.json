@@ -1,6 +1,9 @@
 {
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "files.associations": {
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "string.h": "c",
+        "assert.h": "c",
+        "helper.h": "c"
     }
 }

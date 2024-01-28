@@ -7,53 +7,7 @@
 
 #include "hal/joystick.h"
 #include "hal/led.h"
-
-// Code provided for sleep
-static void sleepForMs(long long delayInMs) {
-  const long long NS_PER_MS = 1000 * 1000;
-  const long long NS_PER_SECOND = 1000000000;
-
-  long long delayNs = delayInMs * NS_PER_MS;
-  int seconds = delayNs / NS_PER_SECOND;
-  int nanoseconds = delayNs % NS_PER_SECOND;
-
-  struct timespec reqDelay = {seconds, nanoseconds};
-  nanosleep(&reqDelay, (struct timespec*)NULL);
-}
-
-// Code provided for getting current time
-static long long getTimeInMs(void) {
-  struct timespec spec;
-  clock_gettime(CLOCK_REALTIME, &spec);
-  long long seconds = spec.tv_sec;
-  long long nanoSeconds = spec.tv_nsec;
-  long long milliSeconds = seconds * 1000 + nanoSeconds / 1000000;
-  return milliSeconds;
-}
-
-// This function is written with help of AI. It is a simple function, but I
-// originally tried to use snprintf to make to code more usable. After long
-// hours of trial, it failed and I was mentally exhausted to simply rely on the
-// AI. However, I simply asked for the implementation, not the logic itself
-// (again, it is a simple function).
-void flashLed(const int frequency, const double duration) {
-  long long startTime = getTimeInMs();
-  long long durationInMs = duration * 1000;
-  int halfPeriodInMs = 1000 / (2 * frequency);
-
-  while (getTimeInMs() - startTime <= durationInMs) {
-    bbgLedBright(LED_PATHS_BRIGHTNESS[0], "1");
-    bbgLedBright(LED_PATHS_BRIGHTNESS[1], "1");
-    bbgLedBright(LED_PATHS_BRIGHTNESS[2], "1");
-    bbgLedBright(LED_PATHS_BRIGHTNESS[3], "1");
-    sleepForMs(halfPeriodInMs);
-    bbgLedBright(LED_PATHS_BRIGHTNESS[0], "0");
-    bbgLedBright(LED_PATHS_BRIGHTNESS[1], "0");
-    bbgLedBright(LED_PATHS_BRIGHTNESS[2], "0");
-    bbgLedBright(LED_PATHS_BRIGHTNESS[3], "0");
-    sleepForMs(halfPeriodInMs);
-  }
-}
+#include "helper.h"
 
 int main() {
   // Set triggers to none and turn on middle two LEDs on BBG

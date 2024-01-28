@@ -12,17 +12,19 @@ This is a working project that you can use as the basis for your assignments.
   .
   ├── app
   │   ├── include
-  │   │   └── badmath.h
+  │   │   └── helper.h
   │   ├── src
-  │   │   ├── badmath.c
+  │   │   ├── helper.c
   │   │   └── main.c
   │   └── CMakeLists.txt           # Sub CMake file, just for app/
   ├── hal
   │   ├── include
   │   │   └── hal
-  │   │       └── button.h
+  │   │       └── joystick.h
+  │   │       └── led.h
   │   ├── src
   │   │   └── button.c
+  │   │   └── led.h
   │   └── CMakeLists.txt           # Sub CMake file, just for hal/
   ├── CMakeLists.txt               # Main CMake file for the project
   └── README.md
