@@ -13,29 +13,27 @@ static const char* LED_PATHS_TRIGGER[] = {
     "/sys/class/leds/beaglebone:green:usr2/trigger",
     "/sys/class/leds/beaglebone:green:usr3/trigger"};
 
-static bool is_initialized = false;
-
+// Set triggers to none and turn on middle two LEDs
 void led_init() {
-  assert(!is_initialized);
-  is_initialized = true;
-
-  for (int i = 0; i < 4; i++) {  // Set triggers to none
+  for (int i = 0; i < 4; i++) {
     bbgSetTrigger(LED_PATHS_TRIGGER[i], "none");
   }
 
-  led_cleanup();  // Turn off everything first
+  led_cleanup();
 
-  for (int i = 1; i < 3; i++) {  // Turn on middle two LEDs on BBG
+  for (int i = 1; i < 3; i++) {
     bbgLedBright(LED_PATHS_BRIGHTNESS[i], "1");
   }
 }
 
+// Turn off all LEDs
 void led_cleanup(void) {
   for (int i = 0; i < 4; i++) {
     bbgLedBright(LED_PATHS_BRIGHTNESS[i], "0");
   }
 }
 
+// Set trigger values
 void bbgSetTrigger(const char* fileName, char* value) {
   FILE* pLedTriggerFile = fopen(fileName, "w");
 
@@ -52,6 +50,7 @@ void bbgSetTrigger(const char* fileName, char* value) {
   fclose(pLedTriggerFile);
 }
 
+// Set brightness values
 void bbgLedBright(const char* fileName, char* value) {
   FILE* pLedBrightnessFile = fopen(fileName, "w");
 
@@ -68,11 +67,8 @@ void bbgLedBright(const char* fileName, char* value) {
   fclose(pLedBrightnessFile);
 }
 
-// This function is written with help of AI. It is a simple function, but I
-// originally tried to use snprintf to make to code more usable. After long
-// hours of trial, it failed and I was mentally exhausted to simply rely on the
-// AI. However, I simply asked for the implementation, not the logic itself
-// (again, it is a simple function).
+// Flash four LEDs
+// Duration in seconds
 void flashLed(const int frequency, const double duration) {
   long long startTime = getTimeInMs();
   long long durationInMs = duration * 1000;

@@ -12,9 +12,7 @@ static const char* JSTICK[] = {
     "/sys/class/gpio/gpio46/value", "/sys/class/gpio/gpio65/value",
     "/sys/class/gpio/gpio27/value"};
 
-// Allow module to ensure it has been initialized (once!)
-static bool is_initialized = false;
-
+// Code provided for running commands
 void runCommand(const char* command) {
   // Execute the shell command (output into pipe)
   FILE* pipe = popen(command, "r");
@@ -39,9 +37,6 @@ void runCommand(const char* command) {
 }
 
 void button_init(void) {
-  assert(!is_initialized);
-  is_initialized = true;
-
   // Execute config-pin
   runCommand("config-pin p8.26 gpio");
   //   runCommand("config-pin p8.47 gpio");
@@ -85,11 +80,4 @@ joyStickButton getJoystickDirection() {
   }
 
   return JSTICK_NONE;
-}
-
-void button_cleanup(void) {
-  // Free any memory, close files, ...
-  printf("Button - Cleanup\n");
-  assert(is_initialized);
-  is_initialized = false;
 }

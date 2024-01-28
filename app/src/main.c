@@ -1,5 +1,3 @@
-// Main program to build the application
-// Has main(); does initialization and cleanup and perhaps some basic logic.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,9 +16,10 @@ int main() {
 
   printf("Hello embedded world, from Ian!\n");
   printf(
-      "When the LEDs light up, press the joystick in that direction! (Press "
+      "\nWhen the LEDs light up, press the joystick in that direction! (Press "
       "left or right to exit)\n");
 
+  // Declare variables for loop control
   srand(time(NULL));
   long long bestRecord = __LONG_LONG_MAX__;
   bool responseFromUser = false;
@@ -30,11 +29,10 @@ int main() {
     printf("Get ready...\n");
     responseFromUser = false;
 
-    // If the user is pressing the joystick, tell them “Please let go of
-    // joystick” and wait until the joystick is not pressing.
+    // User pressing the joystick before game begins
     while (true) {
       if ((getJoystickDirection() != JSTICK_NONE) && firstExecution == true) {
-        printf("Please let go of joystick\n");
+        printf("Please let go of joystick...\n");
         while (true) {
           if (getJoystickDirection() == JSTICK_NONE) {
             break;
