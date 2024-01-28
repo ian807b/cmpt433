@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "hal/button.h"
+#include "hal/joystick.h"
 #include "hal/led.h"
 
 // Code provided for sleep
@@ -18,7 +18,7 @@ static void sleepForMs(long long delayInMs) {
   int nanoseconds = delayNs % NS_PER_SECOND;
 
   struct timespec reqDelay = {seconds, nanoseconds};
-  nanosleep(&reqDelay, (struct timespec *)NULL);
+  nanosleep(&reqDelay, (struct timespec*)NULL);
 }
 
 // Code provided for getting current time
@@ -29,6 +29,30 @@ static long long getTimeInMs(void) {
   long long nanoSeconds = spec.tv_nsec;
   long long milliSeconds = seconds * 1000 + nanoSeconds / 1000000;
   return milliSeconds;
+}
+
+// This function is written with help of AI. It is a simple function, but I
+// originally tried to use snprintf to make to code more usable. After long
+// hours of trial, it failed and I was mentally exhausted to simply rely on the
+// AI. However, I simply asked for the implementation, not the logic itself
+// (again, it is a simple function).
+void flashLed(const int frequency, const double duration) {
+  long long startTime = getTimeInMs();
+  long long durationInMs = duration * 1000;
+  int halfPeriodInMs = 1000 / (2 * frequency);
+
+  while (getTimeInMs() - startTime <= durationInMs) {
+    bbgLedBright(LED_PATHS_BRIGHTNESS[0], "1");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[1], "1");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[2], "1");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[3], "1");
+    sleepForMs(halfPeriodInMs);
+    bbgLedBright(LED_PATHS_BRIGHTNESS[0], "0");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[1], "0");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[2], "0");
+    bbgLedBright(LED_PATHS_BRIGHTNESS[3], "0");
+    sleepForMs(halfPeriodInMs);
+  }
 }
 
 int main() {
@@ -104,8 +128,7 @@ int main() {
           printf(
               "Your reaction time was %lldms; best so far in game is %lld.\n",
               responseTime, bestRecord);
-          // TODO: Flash all four LEDs on and off at 4hz for 0.5 seconds (two
-          // flashes)
+          flashLed(4, 0.5);
         } else if (getJoystickDirection() == JSTICK_LEFT ||
                    getJoystickDirection() == JSTICK_RIGHT) {
           printf("User selected to quit.\n");
@@ -113,7 +136,7 @@ int main() {
           return 0;
         } else {
           printf("Incorrect.\n");
-          // TODO: Flash all four LEDs on and off at 10hz for 1 second
+          flashLed(10, 1);
         }
         responseFromUser = true;
         // Turn off the LED each round

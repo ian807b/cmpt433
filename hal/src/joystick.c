@@ -1,4 +1,4 @@
-#include "hal/button.h"
+#include "hal/joystick.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -44,9 +44,9 @@ void button_init(void) {
 
   // Execute config-pin
   runCommand("config-pin p8.26 gpio");
-//   runCommand("config-pin p8.47 gpio");
+  //   runCommand("config-pin p8.47 gpio");
   runCommand("config-pin p8.46 gpio");
-//   runCommand("config-pin p8.65 gpio");
+  //   runCommand("config-pin p8.65 gpio");
   runCommand("config-pin p8.27 gpio");
 
   // Set in > direction
@@ -93,4 +93,3 @@ void button_cleanup(void) {
   assert(is_initialized);
   is_initialized = false;
 }
-

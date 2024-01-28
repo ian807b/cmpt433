@@ -1,8 +1,8 @@
 // Sample button module
 // Part of the Hardware Abstraction Layer (HAL)
 
-#ifndef _BUTTON_H_
-#define _BUTTON_H_
+#ifndef _JOYSTICK_H_
+#define _JOYSTICK_H_
 
 #include <stdbool.h>
 

@@ -65,6 +65,3 @@ void bbgLedBright(const char* fileName, char* value) {
   }
   fclose(pLedBrightnessFile);
 }
-
-// void flashLed(const char* fileName, const int interval) {
-// }
